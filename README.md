@@ -1,9 +1,9 @@
-# NAuth - Authentication Framework
+# NAuth.API - Authentication Framework
 
 ![.NET](https://img.shields.io/badge/.NET-8.0-blue)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=landim32_NAuth&metric=alert_status)](https://sonarcloud.io/project/overview?id=landim32_NAuth)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=landim32_NAuth&metric=coverage)](https://sonarcloud.io/project/overview?id=landim32_NAuth)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=landim32_NAuth&metric=code_smells)](https://sonarcloud.io/project/overview?id=landim32_NAuth)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=landim32_NAuth.API&metric=alert_status)](https://sonarcloud.io/project/overview?id=landim32_NAuth.API)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=landim32_NAuth.API&metric=coverage)](https://sonarcloud.io/project/overview?id=landim32_NAuth.API)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=landim32_NAuth.API&metric=code_smells)](https://sonarcloud.io/project/overview?id=landim32_NAuth.API)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ## Overview
@@ -70,7 +70,7 @@ The project follows a clean architecture approach with separated layers for API,
 ## 📁 Project Structure
 
 ```
-NAuth/
+NAuth.API/
 ├── NAuth.API/                # Web API layer with controllers
 │   ├── Controllers/          # API endpoints (User, Role, etc.)
 │   ├── appsettings.*.json   # Configuration files
@@ -86,13 +86,6 @@ NAuth/
 │   ├── Context/             # Database context
 │   └── Repository/          # Data access repositories
 ├── NAuth.Infra.Interfaces/  # Repository interfaces
-├── NAuth.ACL/               # Anti-Corruption Layer
-│   ├── UserClient.cs        # User API client
-│   ├── RoleClient.cs        # Role API client
-│   └── RemoteAuthHandler.cs # Remote authentication handler
-├── NAuth.DTO/               # Data Transfer Objects
-│   ├── User/                # User-related DTOs
-│   └── Settings/            # Configuration settings
 ├── NAuth.Test/              # Comprehensive test suite
 │   ├── Domain/              # Domain tests
 │   ├── Infra/               # Infrastructure tests
@@ -102,6 +95,13 @@ NAuth/
 ├── postgres.Dockerfile      # PostgreSQL container
 └── README.md                # This file
 ```
+
+### Related Repositories
+
+- [NAuth.DTO](https://github.com/landim32/NAuth.DTO) - Data Transfer Objects (NuGet package)
+- [NAuth.ACL](https://github.com/landim32/NAuth.ACL) - Anti-Corruption Layer (NuGet package)
+- [NAuth.APP](https://github.com/landim32/NAuth.APP) - Frontend React application
+- [NAuth.React](https://github.com/landim32/NAuth.React) - React component library (npm package)
 
 ---
 

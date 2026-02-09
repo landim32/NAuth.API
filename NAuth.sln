@@ -4,8 +4,6 @@ VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NAuth.Domain", "NAuth.Domain\NAuth.Domain.csproj", "{A1075D98-F8C9-4101-A9BD-D86B2AECA385}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NAuth.DTO", "NAuth.DTO\NAuth.DTO.csproj", "{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NAuth.Infra", "NAuth.Infra\NAuth.Infra.csproj", "{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Docker", "1 - Docker", "{4CA0FD41-3A9C-40D1-99D3-240B1C82D7D9}"
@@ -14,7 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Docker", "1 - Docker", 
 		.env.example = .env.example
 		docker-compose.yml = docker-compose.yml
 		Dockerfile = Dockerfile
-		nauth-app.Dockerfile = nauth-app.Dockerfile
 		postgres.Dockerfile = postgres.Dockerfile
 	EndProjectSection
 EndProject
@@ -22,30 +19,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NAuth.API", "NAuth.API\NAut
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NAuth.Application", "NAuth.Application\NAuth.Application.csproj", "{5DE107B9-14A2-4A93-ACF8-E6F6BE632AC6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NAuth.ACL", "NAuth.ACL\NAuth.ACL.csproj", "{30B413FD-646E-48C3-A423-617C1D35B170}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NAuth.Test", "NAuth.Test\NAuth.Test.csproj", "{74E59D4A-EEE8-41F9-813D-E9E8FC7E9D0C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - Backend", "2 - Backend", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 - Frontend", "3 - Frontend", "{28EE02B3-2346-4DA0-9724-33A45C5D37E5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 - Tests", "3 - Tests", "{798E7B4D-A8A7-4138-89D2-050AF56A21D9}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Tests", "4 - Tests", "{798E7B4D-A8A7-4138-89D2-050AF56A21D9}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5 - Extra", "5 - Extra", "{4641BD00-8DEE-40F0-9872-3D2CEEE1E94B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Extra", "4 - Extra", "{4641BD00-8DEE-40F0-9872-3D2CEEE1E94B}"
 	ProjectSection(SolutionItems) = preProject
 		createContext.ps1 = createContext.ps1
 		GitVersion.yml = GitVersion.yml
 		nauth.sql = nauth.sql
-		publish-nuget.ps1 = publish-nuget.ps1
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NAuth.Infra.Interfaces", "NAuth.Infra.Interfaces\NAuth.Infra.Interfaces.csproj", "{2E1E6915-FBE3-4940-B275-C31B70BAD446}"
-EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "nauth-react", "nauth-react\nauth-react.esproj", "{E135C751-370D-9127-3C4A-D18B09EC2DCF}"
-EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "nauth-app", "nauth-app\nauth-app.esproj", "{54074468-FF50-7FB1-C9C8-F8848E82ABBF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,10 +45,6 @@ Global
 		{A1075D98-F8C9-4101-A9BD-D86B2AECA385}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1075D98-F8C9-4101-A9BD-D86B2AECA385}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1075D98-F8C9-4101-A9BD-D86B2AECA385}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}.Release|Any CPU.Build.0 = Release|Any CPU
 		{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -73,10 +57,6 @@ Global
 		{5DE107B9-14A2-4A93-ACF8-E6F6BE632AC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DE107B9-14A2-4A93-ACF8-E6F6BE632AC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DE107B9-14A2-4A93-ACF8-E6F6BE632AC6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{30B413FD-646E-48C3-A423-617C1D35B170}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{30B413FD-646E-48C3-A423-617C1D35B170}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{30B413FD-646E-48C3-A423-617C1D35B170}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{30B413FD-646E-48C3-A423-617C1D35B170}.Release|Any CPU.Build.0 = Release|Any CPU
 		{74E59D4A-EEE8-41F9-813D-E9E8FC7E9D0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{74E59D4A-EEE8-41F9-813D-E9E8FC7E9D0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74E59D4A-EEE8-41F9-813D-E9E8FC7E9D0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -85,33 +65,17 @@ Global
 		{2E1E6915-FBE3-4940-B275-C31B70BAD446}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E1E6915-FBE3-4940-B275-C31B70BAD446}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E1E6915-FBE3-4940-B275-C31B70BAD446}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E135C751-370D-9127-3C4A-D18B09EC2DCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E135C751-370D-9127-3C4A-D18B09EC2DCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E135C751-370D-9127-3C4A-D18B09EC2DCF}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{E135C751-370D-9127-3C4A-D18B09EC2DCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E135C751-370D-9127-3C4A-D18B09EC2DCF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E135C751-370D-9127-3C4A-D18B09EC2DCF}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{54074468-FF50-7FB1-C9C8-F8848E82ABBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{54074468-FF50-7FB1-C9C8-F8848E82ABBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{54074468-FF50-7FB1-C9C8-F8848E82ABBF}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{54074468-FF50-7FB1-C9C8-F8848E82ABBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{54074468-FF50-7FB1-C9C8-F8848E82ABBF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{54074468-FF50-7FB1-C9C8-F8848E82ABBF}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A1075D98-F8C9-4101-A9BD-D86B2AECA385} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{2E16DDBE-A432-411E-BF7E-F4ED76FFB184} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{5DE107B9-14A2-4A93-ACF8-E6F6BE632AC6} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{30B413FD-646E-48C3-A423-617C1D35B170} = {28EE02B3-2346-4DA0-9724-33A45C5D37E5}
 		{74E59D4A-EEE8-41F9-813D-E9E8FC7E9D0C} = {798E7B4D-A8A7-4138-89D2-050AF56A21D9}
 		{2E1E6915-FBE3-4940-B275-C31B70BAD446} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{E135C751-370D-9127-3C4A-D18B09EC2DCF} = {28EE02B3-2346-4DA0-9724-33A45C5D37E5}
-		{54074468-FF50-7FB1-C9C8-F8848E82ABBF} = {28EE02B3-2346-4DA0-9724-33A45C5D37E5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {09F0A422-0692-4032-9924-7DF1D27AEF60}

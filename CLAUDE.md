@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-NAuth is a modular authentication framework built with .NET 8, React 19, and PostgreSQL. It provides JWT-based authentication with email verification, password recovery, role management, and user profile features. Two packages are published externally: **NAuth.DTO** and **NAuth.ACL** on NuGet, and **nauth-react** on npm.
+NAuth.API is the backend REST API for the NAuth authentication framework, built with .NET 8 and PostgreSQL. It provides JWT-based authentication with email verification, password recovery, role management, and user profile features. External packages (NAuth.DTO, NAuth.ACL, nauth-react) have been moved to their own repositories.
 
 ## Build & Test Commands
 
@@ -28,25 +28,6 @@ dotnet test NAuth.Test/NAuth.Test.csproj --filter "FullyQualifiedName~UserServic
 docker compose up --build
 ```
 
-### Frontend (nauth-app)
-
-```bash
-cd nauth-app
-npm ci --legacy-peer-deps
-npm run dev          # Vite dev server
-npm run build        # Production build
-```
-
-### Component Library (nauth-react)
-
-```bash
-cd nauth-react
-npm ci --legacy-peer-deps
-npm run build        # Vite library build (CJS + ESM)
-npm run test         # Vitest
-npm run storybook    # Storybook dev
-```
-
 ## Architecture
 
 Clean architecture with strict layer separation. Dependencies flow inward only:
@@ -62,8 +43,8 @@ NAuth.API → NAuth.Application → NAuth.Domain ← NAuth.Infra
 - **NAuth.Domain** — Business logic lives in `UserService` (largest file ~877 lines) and `RoleService`. Domain models (UserModel, RoleModel, etc.) implement interfaces from Infra.Interfaces. Custom exceptions in `Exceptions/`. Factory pattern for model creation.
 - **NAuth.Infra** — EF Core 9 with PostgreSQL (Npgsql), lazy loading proxies. `NAuthContext` defines all entity configurations. Repository pattern with `UnitOfWork` for transactions.
 - **NAuth.Infra.Interfaces** — Repository and model interfaces. Keeps Domain independent of Infra.
-- **NAuth.DTO** — Shared DTOs published as NuGet package. Used by both the API and consuming services.
-- **NAuth.ACL** — Anti-Corruption Layer published as NuGet. Contains `NAuthHandler` (JWT validation/claims extraction), `UserClient` and `RoleClient` (HTTP clients for consuming the NAuth API from other services).
+- **NAuth.DTO** — Shared DTOs (separate repository, NuGet package). Referenced as PackageReference.
+- **NAuth.ACL** — Anti-Corruption Layer (separate repository, NuGet package). Referenced as PackageReference.
 - **NAuth.Test** — xUnit + Moq tests organized by layer: `Domain/` (model + service tests), `Infra/` (repository tests with EF InMemory), `ACL/` (client + handler tests).
 
 ## Key Patterns
@@ -90,7 +71,7 @@ Scaffold context from existing DB: `./createContext.ps1`
 
 - **GitVersion** (ContinuousDelivery mode) for semantic versioning
 - Commit message prefixes control version bumps: `major:`/`breaking:`, `feature:`/`minor:`, `fix:`/`patch:`
-- GitHub Actions: `sonarcloud.yml` (quality gate), `version-tag.yml` (auto-tagging), `publish-nuget.yml` (publishes NAuth.DTO and NAuth.ACL when changed)
+- GitHub Actions: `sonarcloud.yml` (quality gate), `version-tag.yml` (auto-tagging)
 
 ## Documentation
 
@@ -101,8 +82,7 @@ All generated documentation must:
 
 ## Docker
 
-Three containers orchestrated via `docker-compose.yml`:
+Two containers orchestrated via `docker-compose.yml`:
 - **nauth-postgres** — PostgreSQL with custom init scripts
 - **nauth-api** — Multi-stage .NET build, runs as non-root `appuser`, ports 5004/5005
-- **nauth-app** — Vite build → nginx, port 5006
 - Requires external Docker network: `emagine-network`

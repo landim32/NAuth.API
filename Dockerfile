@@ -8,8 +8,6 @@ WORKDIR /src
 COPY ["NAuth.API/NAuth.API.csproj", "NAuth.API/"]
 COPY ["NAuth.Application/NAuth.Application.csproj", "NAuth.Application/"]
 COPY ["NAuth.Domain/NAuth.Domain.csproj", "NAuth.Domain/"]
-COPY ["NAuth.ACL/NAuth.ACL.csproj", "NAuth.ACL/"]
-COPY ["NAuth.DTO/NAuth.DTO.csproj", "NAuth.DTO/"]
 COPY ["NAuth.Infra/NAuth.Infra.csproj", "NAuth.Infra/"]
 COPY ["NAuth.Infra.Interfaces/NAuth.Infra.Interfaces.csproj", "NAuth.Infra.Interfaces/"]
 

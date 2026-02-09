@@ -26,7 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NAuth.ACL\NAuth.ACL.csproj" />
+    <PackageReference Include="NAuth.ACL" Version="*" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\NAuth.Domain\NAuth.Domain.csproj" />
     <ProjectReference Include="..\NAuth.Infra\NAuth.Infra.csproj" />
   </ItemGroup>

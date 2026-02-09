@@ -22,10 +22,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NAuth.ACL\NAuth.ACL.csproj" />
     <ProjectReference Include="..\NAuth.Application\NAuth.Application.csproj" />
     <ProjectReference Include="..\NAuth.Domain\NAuth.Domain.csproj" />
-    <ProjectReference Include="..\NAuth.DTO\NAuth.DTO.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NAuth.ACL" Version="*" />
+    <PackageReference Include="NAuth.DTO" Version="*" />
   </ItemGroup>
 
   <ItemGroup>
