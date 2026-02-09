@@ -13,9 +13,6 @@ COPY ["NAuth.DTO/NAuth.DTO.csproj", "NAuth.DTO/"]
 COPY ["NAuth.Infra/NAuth.Infra.csproj", "NAuth.Infra/"]
 COPY ["NAuth.Infra.Interfaces/NAuth.Infra.Interfaces.csproj", "NAuth.Infra.Interfaces/"]
 
-# Copy external libraries
-COPY ["Lib/", "Lib/"]
-
 # Restore dependencies
 RUN dotnet restore "NAuth.API/NAuth.API.csproj"
 
