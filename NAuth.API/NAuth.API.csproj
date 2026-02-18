@@ -7,14 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="DTOs\**" />
-    <Content Remove="DTOs\**" />
-    <EmbeddedResource Remove="DTOs\**" />
-    <None Remove="DTOs\**" />
-    <None Remove="DTO\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -28,11 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\NAuth.Application\NAuth.Application.csproj" />
     <ProjectReference Include="..\NAuth.Domain\NAuth.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="NAuth.ACL" Version="*" />
-    <PackageReference Include="NAuth.DTO" Version="*" />
+    <ProjectReference Include="..\NAuth\NAuth.csproj" />
   </ItemGroup>
 
   <ItemGroup>

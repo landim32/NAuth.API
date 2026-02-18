@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-NAuth.API is the backend REST API for the NAuth authentication framework, built with .NET 8 and PostgreSQL. It provides JWT-based authentication with email verification, password recovery, role management, and user profile features. External packages (NAuth.DTO, NAuth.ACL, nauth-react) have been moved to their own repositories.
+NAuth.API is the backend REST API for the NAuth authentication framework, built with .NET 8 and PostgreSQL. It provides JWT-based authentication with email verification, password recovery, role management, and user profile features.
 
 ## Build & Test Commands
 
@@ -43,8 +43,7 @@ NAuth.API → NAuth.Application → NAuth.Domain ← NAuth.Infra
 - **NAuth.Domain** — Business logic lives in `UserService` (largest file ~877 lines) and `RoleService`. Domain models (UserModel, RoleModel, etc.) implement interfaces from Infra.Interfaces. Custom exceptions in `Exceptions/`. Factory pattern for model creation.
 - **NAuth.Infra** — EF Core 9 with PostgreSQL (Npgsql), lazy loading proxies. `NAuthContext` defines all entity configurations. Repository pattern with `UnitOfWork` for transactions.
 - **NAuth.Infra.Interfaces** — Repository and model interfaces. Keeps Domain independent of Infra.
-- **NAuth.DTO** — Shared DTOs (separate repository, NuGet package). Referenced as PackageReference.
-- **NAuth.ACL** — Anti-Corruption Layer (separate repository, NuGet package). Referenced as PackageReference.
+- **NAuth** — Unified library containing DTOs (`NAuth.DTO.*` namespaces) and ACL clients/auth handler (`NAuth.ACL.*` namespaces). In-solution ProjectReference, also published as NuGet package `NAuth`.
 - **NAuth.Test** — xUnit + Moq tests organized by layer: `Domain/` (model + service tests), `Infra/` (repository tests with EF InMemory), `ACL/` (client + handler tests).
 
 ## Key Patterns
@@ -71,7 +70,7 @@ Scaffold context from existing DB: `./createContext.ps1`
 
 - **GitVersion** (ContinuousDelivery mode) for semantic versioning
 - Commit message prefixes control version bumps: `major:`/`breaking:`, `feature:`/`minor:`, `fix:`/`patch:`
-- GitHub Actions: `sonarcloud.yml` (quality gate), `version-tag.yml` (auto-tagging)
+- GitHub Actions: `sonarcloud.yml` (quality gate), `version-tag.yml` (auto-tagging), `publish-nuget.yml` (publishes NAuth NuGet package)
 
 ## Documentation
 
