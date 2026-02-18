@@ -10,6 +10,7 @@ COPY ["NAuth.Application/NAuth.Application.csproj", "NAuth.Application/"]
 COPY ["NAuth.Domain/NAuth.Domain.csproj", "NAuth.Domain/"]
 COPY ["NAuth.Infra/NAuth.Infra.csproj", "NAuth.Infra/"]
 COPY ["NAuth.Infra.Interfaces/NAuth.Infra.Interfaces.csproj", "NAuth.Infra.Interfaces/"]
+COPY ["NAuth/NAuth.csproj", "NAuth/"]
 
 # Restore dependencies
 RUN dotnet restore "NAuth.API/NAuth.API.csproj"

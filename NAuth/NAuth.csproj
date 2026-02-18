@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>NAuth</RootNamespace>
+    <!-- NuGet -->
+    <PackageId>NAuth</PackageId>
+    <Authors>Rodrigo Landim</Authors>
+    <Company>Emagine</Company>
+    <Description>Unified NAuth library containing DTOs, ACL clients, authentication handlers, and HTTP client implementations.</Description>
+    <PackageTags>dotnet;nuget;authentication;authorization;nauth;user-management;acl;http-client;jwt;dto</PackageTags>
+    <RepositoryUrl>https://github.com/landim32/NAuth</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Dependencies from NAuth.DTO -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <!-- Dependencies from NAuth.ACL -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.3.0" />
+    <PackageReference Include="NTools.ACL" Version="0.2.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.15.0" />
+  </ItemGroup>
+</Project>

@@ -20,11 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NAuth.DTO" Version="*" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\NAuth.Infra.Interfaces\NAuth.Infra.Interfaces.csproj" />
+    <ProjectReference Include="..\NAuth\NAuth.csproj" />
   </ItemGroup>
 
   <ItemGroup>
