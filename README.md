@@ -1,16 +1,16 @@
 # NAuth.API - Authentication Framework
 
 ![.NET](https://img.shields.io/badge/.NET-8.0-blue)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=landim32_NAuth.API&metric=alert_status)](https://sonarcloud.io/project/overview?id=landim32_NAuth.API)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=landim32_NAuth.API&metric=coverage)](https://sonarcloud.io/project/overview?id=landim32_NAuth.API)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=landim32_NAuth.API&metric=code_smells)](https://sonarcloud.io/project/overview?id=landim32_NAuth.API)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=emaginebr_NAuth&metric=alert_status)](https://sonarcloud.io/project/overview?id=emaginebr_NAuth)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=emaginebr_NAuth&metric=coverage)](https://sonarcloud.io/project/overview?id=emaginebr_NAuth)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=emaginebr_NAuth&metric=code_smells)](https://sonarcloud.io/project/overview?id=emaginebr_NAuth)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ## Overview
 
 **NAuth.API** is the central backend of the NAuth ecosystem — a complete, modular authentication framework designed for fast and secure user management in modern web applications. Built using **.NET 8** and **PostgreSQL**, it provides a robust REST API for user registration, login, password recovery, role management, and profile updates.
 
-This is the **main project** of the NAuth ecosystem. All other NAuth packages ([NAuth.DTO](https://github.com/landim32/NAuth.DTO), [NAuth.ACL](https://github.com/landim32/NAuth.ACL), [NAuth.React](https://github.com/landim32/NAuth.React), [NAuth.App](https://github.com/landim32/NAuth.APP)) integrate with or consume this API.
+This is the **main project** of the NAuth ecosystem. The frontend component library [nauth-react](https://github.com/emaginebr/nauth-react) integrates with and consumes this API.
 
 The project follows a clean architecture approach with separated layers for API, Application, Domain, Infrastructure, and comprehensive test coverage.
 
@@ -100,24 +100,18 @@ NAuth.API/
 
 ### Ecosystem
 
-NAuth is a modular ecosystem. This repository (**NAuth.API**) is the central backend — the other packages integrate with it:
+NAuth is a modular ecosystem. This repository (**NAuth.API**) is the central backend. The DTO and ACL packages are included in-solution under the `NAuth` project (also published as a NuGet package).
 
 | Project | Type | Package | Description |
 |---------|------|---------|-------------|
-| **[NAuth.DTO](https://github.com/landim32/NAuth.DTO)** | NuGet | [![NuGet](https://img.shields.io/nuget/v/NAuth.DTO.svg)](https://www.nuget.org/packages/NAuth.DTO/) | Shared Data Transfer Objects used across all .NET projects |
-| **[NAuth.ACL](https://github.com/landim32/NAuth.ACL)** | NuGet | [![NuGet](https://img.shields.io/nuget/v/NAuth.ACL.svg)](https://www.nuget.org/packages/NAuth.ACL/) | HTTP client library for consuming the NAuth API from .NET apps |
-| **[NAuth.React](https://github.com/landim32/NAuth.React)** | NPM | [![npm](https://img.shields.io/npm/v/nauth-react.svg)](https://www.npmjs.com/package/nauth-react) | React component library (login, register, user management) |
-| **[NAuth.App](https://github.com/landim32/NAuth.APP)** | App | — | Frontend web application built with NAuth.React |
+| **[nauth-react](https://github.com/emaginebr/nauth-react)** | NPM | [![npm](https://img.shields.io/npm/v/nauth-react.svg)](https://www.npmjs.com/package/nauth-react) | React component library (login, register, user management) |
 
 #### Dependency graph
 
 ```
-NAuth.App (React frontend)
-  └─ nauth-react (NPM)
-       └─ NAuth.API (HTTP) ← you are here
-            ├─ NAuth.ACL (NuGet)
-            │   └─ NAuth.DTO (NuGet)
-            └─ NAuth.DTO (NuGet)
+nauth-react (NPM)
+  └─ NAuth.API (HTTP) ← you are here
+       └─ NAuth (NuGet - DTOs + ACL)
 ```
 
 ---
@@ -805,7 +799,7 @@ docker system prune -af
 
 1. **Check logs**: `docker-compose logs -f`
 2. **Check container status**: `docker-compose ps`
-3. **Open an issue**: [GitHub Issues](https://github.com/landim32/NAuth/issues)
+3. **Open an issue**: [GitHub Issues](https://github.com/emaginebr/NAuth/issues)
 
 ---
 
@@ -998,8 +992,8 @@ The project includes a GitHub Actions workflow for automated Docker builds.
 
 **Using the images:**
 ```bash
-docker pull ghcr.io/landim32/nauth/nauth-api:main
-docker pull ghcr.io/landim32/nauth/nauth-postgres:main
+docker pull ghcr.io/emaginebr/nauth/nauth-api:main
+docker pull ghcr.io/emaginebr/nauth/nauth-postgres:main
 ```
 
 ---
@@ -1052,7 +1046,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 👨‍💻 Author
 
-Developed by **[Rodrigo Landim Carneiro](https://github.com/landim32)**
+Developed by **[Rodrigo Landim Carneiro](https://github.com/emaginebr)**
 
 ---
 
@@ -1074,8 +1068,8 @@ This project is licensed under the **MIT License** - see the LICENSE file for de
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/landim32/NAuth/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/landim32/NAuth/discussions)
+- **Issues**: [GitHub Issues](https://github.com/emaginebr/NAuth/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/emaginebr/NAuth/discussions)
 
 ---
 
