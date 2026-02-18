@@ -10,7 +10,7 @@
     <Company>Emagine</Company>
     <Description>Unified NAuth library containing DTOs, ACL clients, authentication handlers, and HTTP client implementations.</Description>
     <PackageTags>dotnet;nuget;authentication;authorization;nauth;user-management;acl;http-client;jwt;dto</PackageTags>
-    <RepositoryUrl>https://github.com/landim32/NAuth</RepositoryUrl>
+    <RepositoryUrl>https://github.com/emaginebr/NAuth</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageReadmeFile>README.md</PackageReadmeFile>
