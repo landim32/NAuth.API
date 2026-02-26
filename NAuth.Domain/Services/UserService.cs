@@ -661,6 +661,29 @@ namespace NAuth.Domain.Services
                     model.UpdatedAt = DateTime.Now;
                     model.Slug = await GenerateSlug(model);
 
+                    if (user.ImageUrl != null)
+                    {
+                        if (!string.IsNullOrEmpty(user.ImageUrl))
+                        {
+                            if (Uri.TryCreate(user.ImageUrl, UriKind.Absolute, out var uri))
+                            {
+                                var fileName = Uri.UnescapeDataString(System.IO.Path.GetFileName(uri.AbsolutePath));
+                                if (!string.IsNullOrEmpty(fileName))
+                                {
+                                    model.Image = fileName;
+                                }
+                            }
+                            else
+                            {
+                                model.Image = user.ImageUrl;
+                            }
+                        }
+                        else
+                        {
+                            model.Image = string.Empty;
+                        }
+                    }
+
                     model.Update(_factories.UserFactory);
 
                     var modelPhone = _factories.PhoneFactory.BuildUserPhoneModel();

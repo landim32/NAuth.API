@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     build:
@@ -35,6 +33,7 @@ services:
       ASPNETCORE_URLS: "http://+:80;https://+:443"
       ConnectionStrings__NAuthContext: ${CONNECTION_STRING}
       NAuth__JwtSecret: ${JWT_SECRET}
+      zTools__ApiURL: ${ZTOOL_API_URL}
       ASPNETCORE_Kestrel__Certificates__Default__Password: ${CERTIFICATE_PASSWORD}
       ASPNETCORE_Kestrel__Certificates__Default__Path: /app/emagine.pfx
     ports:
