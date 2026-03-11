@@ -33,7 +33,7 @@ If no arguments are provided, ask the user what kind of diagram they need.
 Generate the PNG using the Mermaid CLI (`mmdc`):
 
 ```bash
-npx -y @mermaid-js/mermaid-cli mmdc -i <input>.mmd -o <output>.png -b transparent
+npx -y @mermaid-js/mermaid-cli mmdc -i <input>.mmd -o <output>.png -b white
 ```
 
 If PNG generation fails:
@@ -94,7 +94,7 @@ Create diagrams using any Mermaid-supported type:
 1. Run the Mermaid CLI to render the PNG:
 
 ```bash
-npx -y @mermaid-js/mermaid-cli mmdc -i docs/<name>.mmd -o docs/<name>.png -b transparent
+npx -y @mermaid-js/mermaid-cli mmdc -i docs/<name>.mmd -o docs/<name>.png -b white
 ```
 
 2. Verify the PNG was created successfully
