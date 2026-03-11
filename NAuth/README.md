@@ -4,7 +4,7 @@
 [![NuGet Downloads](https://img.shields.io/nuget/dt/NAuth.svg)](https://www.nuget.org/packages/NAuth/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Unified library for the [NAuth](https://github.com/landim32/NAuth.API) authentication and authorization ecosystem. Contains Data Transfer Objects (DTOs), HTTP client implementations (ACL), authentication handlers, and JWT token processing for user management, roles, and authentication.
+Unified library for the [NAuth](https://github.com/landim32/NAuth.API) authentication and authorization ecosystem. Contains Data Transfer Objects (DTOs), HTTP client implementations (ACL), authentication handlers, JWT token processing, and **multi-tenant support** for user management, roles, and authentication.
 
 > **Part of the NAuth ecosystem** — see [NAuth.API](https://github.com/landim32/NAuth.API) for the main project and full documentation.
 
@@ -31,7 +31,7 @@ Install-Package NAuth
 - **User DTOs**: Complete user data models for authentication and management
 - **Role DTOs**: Role and permission data structures
 - **Authentication Models**: Login parameters, token results, and password management
-- **Settings**: Configuration objects for NAuth services
+- **Settings**: Configuration objects for NAuth services (including tenant settings)
 - **Converters**: Custom JSON converters for proper serialization
 - **Pagination**: Generic paged result container
 
@@ -43,15 +43,22 @@ Install-Package NAuth
 - **Authentication Handler**: JWT validation middleware for ASP.NET Core
 - **Session Management**: Extract user info from JWT claims
 
+### Multi-Tenant Support
+
+- **Automatic Tenant Header Injection**: `TenantDelegatingHandler` adds `X-Tenant-Id` to all HTTP requests
+- **Pluggable Tenant Resolution**: `ITenantProvider` interface for custom tenant identification strategies
+- **Per-Tenant JWT Secrets**: `ITenantSecretProvider` allows different JWT secrets per tenant
+- **Built-in Settings Provider**: `SettingsTenantProvider` reads tenant ID from `NAuthSetting.TenantId`
+- **Simplified DI Registration**: `AddNAuth()` and `AddNAuthAuthentication()` extension methods
+
 ## Quick Start
 
 ### 1. Configure Services
 
-Add NAuth to your ASP.NET Core application:
+Add NAuth to your ASP.NET Core application using the new extension methods:
 
 ```csharp
 using NAuth.ACL;
-using NAuth.ACL.Interfaces;
 using NAuth.DTO.Settings;
 
 public class Startup
@@ -59,26 +66,21 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         // Configure NAuth settings
-        services.Configure<NAuthSetting>(options =>
-        {
-            options.ApiUrl = "https://your-nauth-api.com/api";
-            options.JwtSecret = "your-jwt-secret-key";
-            options.BucketName = "user-images";
-        });
+        services.Configure<NAuthSetting>(Configuration.GetSection("NAuthSetting"));
 
-        // Add HttpClient
-        services.AddHttpClient();
+        // Register all NAuth services (clients, tenant provider, delegating handler)
+        services.AddNAuth();
 
-        // Register NAuth clients
-        services.AddScoped<IUserClient, UserClient>();
-        services.AddScoped<IRoleClient, RoleClient>();
-
-        // Add authentication with NAuth handler
-        services.AddAuthentication("NAuth")
-            .AddScheme<AuthenticationSchemeOptions, NAuthHandler>("NAuth", options => { });
+        // Add NAuth authentication handler
+        services.AddNAuthAuthentication();
     }
 }
 ```
+
+The `AddNAuth()` method registers:
+- `ITenantProvider` (defaults to `SettingsTenantProvider`)
+- `TenantDelegatingHandler` for automatic `X-Tenant-Id` header injection
+- `IUserClient` / `IRoleClient` HTTP clients with the tenant handler in the pipeline
 
 ### 2. Configure appsettings.json
 
@@ -87,10 +89,111 @@ public class Startup
   "NAuthSetting": {
     "ApiUrl": "https://your-nauth-api.com/api",
     "JwtSecret": "your-super-secret-jwt-key-min-64-characters",
-    "BucketName": "nauth-user-images"
+    "BucketName": "nauth-user-images",
+    "TenantId": "your-tenant-id"
   }
 }
 ```
+
+## Multi-Tenant
+
+NAuth supports multi-tenant architectures where a single NAuth.API instance serves multiple tenants with isolated data.
+
+### How It Works
+
+1. **Outgoing requests**: The `TenantDelegatingHandler` automatically injects the `X-Tenant-Id` HTTP header into every request made by `UserClient` and `RoleClient`.
+2. **Incoming requests**: The `NAuthHandler` resolves the JWT secret per tenant by reading the `tenant_id` claim from the token and delegating to `ITenantSecretProvider`.
+3. **Fallback**: If no tenant-specific secret is found, the default `JwtSecret` from `NAuthSetting` is used.
+
+### Option 1: Simple (Single Tenant via Settings)
+
+Use the default `SettingsTenantProvider`, which reads the tenant ID from configuration:
+
+```csharp
+services.Configure<NAuthSetting>(Configuration.GetSection("NAuthSetting"));
+services.AddNAuth(); // Uses SettingsTenantProvider by default
+services.AddNAuthAuthentication();
+```
+
+```json
+{
+  "NAuthSetting": {
+    "ApiUrl": "https://your-nauth-api.com/api",
+    "JwtSecret": "your-jwt-secret-key-min-64-characters",
+    "TenantId": "tenant-abc"
+  }
+}
+```
+
+### Option 2: Custom Tenant Provider
+
+Implement `ITenantProvider` for dynamic tenant resolution (e.g., from request headers, subdomains, or route data):
+
+```csharp
+using NAuth.ACL.Interfaces;
+
+public class HeaderTenantProvider : ITenantProvider
+{
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
+    public HeaderTenantProvider(IHttpContextAccessor httpContextAccessor)
+    {
+        _httpContextAccessor = httpContextAccessor;
+    }
+
+    public string? GetTenantId()
+    {
+        return _httpContextAccessor.HttpContext?
+            .Request.Headers["X-Tenant-Id"].FirstOrDefault();
+    }
+}
+```
+
+Register with the generic overload:
+
+```csharp
+services.AddHttpContextAccessor();
+services.AddNAuth<HeaderTenantProvider>();
+services.AddNAuthAuthentication();
+```
+
+### Option 3: Per-Tenant JWT Secrets
+
+Implement `ITenantSecretProvider` so the authentication handler can validate tokens signed with different secrets per tenant:
+
+```csharp
+using NAuth.ACL.Interfaces;
+
+public class DatabaseTenantSecretProvider : ITenantSecretProvider
+{
+    private readonly ITenantRepository _tenantRepo;
+
+    public DatabaseTenantSecretProvider(ITenantRepository tenantRepo)
+    {
+        _tenantRepo = tenantRepo;
+    }
+
+    public string? GetJwtSecret(string tenantId)
+    {
+        var tenant = _tenantRepo.GetById(tenantId);
+        return tenant?.JwtSecret;
+    }
+}
+```
+
+Register it alongside your tenant provider:
+
+```csharp
+services.AddNAuth<HeaderTenantProvider>();
+services.AddNAuthAuthentication();
+services.AddScoped<ITenantSecretProvider, DatabaseTenantSecretProvider>();
+```
+
+The `NAuthHandler` will:
+1. Read the `tenant_id` claim from the JWT token (without validating first)
+2. Call `ITenantSecretProvider.GetJwtSecret(tenantId)` to get the tenant-specific secret
+3. Validate the token using the resolved secret
+4. Fall back to `NAuthSetting.JwtSecret` if no tenant secret is found
 
 ## Core DTOs
 
@@ -216,6 +319,7 @@ public class NAuthSetting
     public string ApiUrl { get; set; }
     public string JwtSecret { get; set; }
     public string BucketName { get; set; }
+    public string TenantId { get; set; }
 }
 ```
 
@@ -402,7 +506,7 @@ public class RoleService
 
 ## Authentication Handler
 
-Custom JWT authentication handler for ASP.NET Core middleware:
+Custom JWT authentication handler for ASP.NET Core middleware with multi-tenant support:
 
 ```csharp
 [ApiController]
@@ -483,6 +587,8 @@ catch (Exception ex)
 
 - **Newtonsoft.Json** (13.0.3)
 - **Microsoft.AspNetCore.Authentication** (2.3.0)
+- **Microsoft.Extensions.Configuration.Abstractions** (9.0.8)
+- **Microsoft.Extensions.Http** (9.0.8)
 - **System.IdentityModel.Tokens.Jwt** (8.15.0)
 - **zTools** (latest)
 
@@ -492,8 +598,9 @@ catch (Exception ex)
 2. **Token Refresh**: Implement token refresh before expiration
 3. **Error Handling**: Always wrap API calls in try-catch blocks
 4. **Logging**: Use structured logging for debugging
-5. **Dependency Injection**: Always use DI for client instances
+5. **Dependency Injection**: Always use DI for client instances — prefer `AddNAuth()` over manual registration
 6. **Configuration**: Use strongly-typed configuration with `IOptions<NAuthSetting>`
+7. **Multi-Tenant**: Use `AddNAuth<T>()` with a custom `ITenantProvider` for dynamic tenant resolution in multi-tenant scenarios
 
 ## NAuth Ecosystem
 
