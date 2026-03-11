@@ -1,0 +1,75 @@
+%% Diagram: NAuth.API System Design
+%% Type: Flowchart
+%% Generated: 2026-03-11
+
+flowchart TD
+    subgraph Clients["Clients"]
+        react["nauth-react\n(NPM Package)"]
+        apps["Client Applications\n(via NAuth NuGet)"]
+    end
+
+    subgraph NAuthAPI["NAuth.API"]
+        middleware["TenantMiddleware\n(X-Tenant-Id / JWT claim)"]
+        handler["MultiTenantHandler\n(JWT Auth per Tenant)"]
+        controllers["Controllers\n(User / Role)"]
+        resolver["TenantResolver\n+ TenantDbContextFactory"]
+        swagger["Swagger UI"]
+        health["Health Check"]
+    end
+
+    subgraph Domain["NAuth.Domain"]
+        userService["UserService"]
+        roleService["RoleService"]
+        factories["Domain Factories\n(User / Role)"]
+    end
+
+    subgraph Infra["NAuth.Infra"]
+        context["NAuthContext\n(EF Core 9)"]
+        repos["Repositories\n+ UnitOfWork"]
+    end
+
+    subgraph ExternalServices["External Services"]
+        mailersend["MailerSend\n(Email)"]
+        s3["Amazon S3\n(File Storage)"]
+        stripe["Stripe\n(Payments)"]
+        ztools["zTools API\n(Image Processing)"]
+    end
+
+    subgraph Databases["PostgreSQL (per Tenant)"]
+        db_emagine[("emagine_db")]
+        db_viralt[("viralt_db")]
+        db_devblog[("devblog_db")]
+    end
+
+    react -->|"HTTP/REST"| middleware
+    apps -->|"HTTP/REST"| middleware
+
+    middleware --> handler
+    handler --> controllers
+    controllers --> userService
+    controllers --> roleService
+
+    userService --> factories
+    roleService --> factories
+    userService --> repos
+    roleService --> repos
+    repos --> context
+
+    resolver -->|"Tenant Config"| context
+    middleware -->|"Resolve Tenant"| resolver
+
+    userService -->|"Send Emails"| mailersend
+    userService -->|"Upload Files"| s3
+    userService -->|"Process Images"| ztools
+    userService -->|"Payments"| stripe
+
+    context -->|"emagine"| db_emagine
+    context -->|"viralt"| db_viralt
+    context -->|"devblog"| db_devblog
+
+    style Clients fill:#e1f5fe,stroke:#0288d1
+    style NAuthAPI fill:#fff3e0,stroke:#f57c00
+    style Domain fill:#e8f5e9,stroke:#388e3c
+    style Infra fill:#fce4ec,stroke:#c62828
+    style ExternalServices fill:#f3e5f5,stroke:#7b1fa2
+    style Databases fill:#fff9c4,stroke:#f9a825

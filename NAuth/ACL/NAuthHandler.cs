@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using NAuth.ACL.Interfaces;
 using NAuth.DTO.Settings;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
@@ -14,16 +15,19 @@ namespace NAuth.ACL
     public class NAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         private readonly NAuthSetting _nauthSetting;
+        private readonly ITenantSecretProvider? _tenantSecretProvider;
 
         public NAuthHandler(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock,
-            IOptions<NAuthSetting> nauthSetting)
+            IOptions<NAuthSetting> nauthSetting,
+            ITenantSecretProvider? tenantSecretProvider = null)
             : base(options, logger, encoder, clock)
         {
             _nauthSetting = nauthSetting.Value;
+            _tenantSecretProvider = tenantSecretProvider;
         }
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -48,7 +52,7 @@ namespace NAuth.ACL
                 var authHeader = AuthenticationHeaderValue.Parse(authHeaderValue);
                 var token = authHeader.Parameter;
 
-                var jwtSecret = _nauthSetting.JwtSecret;
+                var jwtSecret = ResolveJwtSecret(token);
                 if (string.IsNullOrEmpty(jwtSecret))
                 {
                     Logger.LogError("Authentication failed: NAuth:JwtSecret is not configured");
@@ -112,6 +116,35 @@ namespace NAuth.ACL
                 Logger.LogError(ex, "Error validating token");
                 return Task.FromResult(AuthenticateResult.Fail($"Error validating token: {ex.Message}"));
             }
+        }
+
+        private string? ResolveJwtSecret(string? token)
+        {
+            if (_tenantSecretProvider == null || string.IsNullOrEmpty(token))
+                return _nauthSetting.JwtSecret;
+
+            try
+            {
+                var handler = new JwtSecurityTokenHandler();
+                if (handler.CanReadToken(token))
+                {
+                    var jwt = handler.ReadJwtToken(token);
+                    var tenantClaim = jwt.Claims.FirstOrDefault(c => c.Type == "tenant_id");
+
+                    if (tenantClaim != null && !string.IsNullOrEmpty(tenantClaim.Value))
+                    {
+                        var secret = _tenantSecretProvider.GetJwtSecret(tenantClaim.Value);
+                        if (!string.IsNullOrEmpty(secret))
+                            return secret;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning(ex, "Failed to resolve tenant-specific JWT secret, falling back to default");
+            }
+
+            return _nauthSetting.JwtSecret;
         }
     }
 }

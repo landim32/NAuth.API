@@ -195,6 +195,37 @@ Tenants are configured in `appsettings.json` (or injected via environment variab
 
 ---
 
+## 🏗️ System Design
+
+The following diagram illustrates the high-level architecture of **NAuth.API**, including the multi-tenant request flow, layer separation, and external service integrations:
+
+![System Design](docs/system-design.png)
+
+### Architecture Overview
+
+- **Clients** connect via HTTP/REST — either through the `nauth-react` frontend library or any application using the `NAuth` NuGet package (DTOs + ACL).
+- **TenantMiddleware** intercepts every request, resolving the tenant from the JWT `tenant_id` claim or the `X-Tenant-Id` header, and configures the scoped `ITenantContext`.
+- **MultiTenantHandler** authenticates requests using the tenant-specific JWT secret.
+- **Controllers** delegate to domain services (`UserService`, `RoleService`), which contain all business logic.
+- **NAuth.Infra** provides data access via EF Core 9 repositories and `UnitOfWork`, with `TenantDbContextFactory` routing each request to the correct tenant database.
+- **External Services**: MailerSend (transactional emails), Amazon S3 (per-tenant file storage), Stripe (payments), and zTools API (image processing).
+- **PostgreSQL**: Each tenant has its own isolated database (`emagine_db`, `viralt_db`, `devblog_db`).
+
+> 📄 **Source:** The editable Mermaid source is available at [`docs/system-design.mmd`](docs/system-design.mmd).
+
+---
+
+## 📖 Additional Documentation
+
+| Document | Description |
+|----------|-------------|
+| [USER_API_DOCUMENTATION](docs/USER_API_DOCUMENTATION.md) | Complete User API endpoint reference |
+| [ROLE_API_DOCUMENTATION](docs/ROLE_API_DOCUMENTATION.md) | Complete Role API endpoint reference |
+| [MULTI_TENANT_API](docs/MULTI_TENANT_API.md) | Multi-tenant architecture and configuration guide |
+| [system-design.mmd](docs/system-design.mmd) | Editable Mermaid source for the system design diagram |
+
+---
+
 ## ⚙️ Environment Configuration
 
 ### Development
