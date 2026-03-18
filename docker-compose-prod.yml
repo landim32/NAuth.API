@@ -25,6 +25,10 @@ services:
       Tenants__bazzuca__ConnectionString: ${BAZZUCA_CONNECTION_STRING}
       # Maps to appsettings: Tenants.bazzuca.JwtSecret
       Tenants__bazzuca__JwtSecret: ${BAZZUCA_JWT_SECRET}
+      # Maps to appsettings: Tenants.monexup.ConnectionString
+      Tenants__monexup__ConnectionString: ${MONEXUP_CONNECTION_STRING}
+      # Maps to appsettings: Tenants.monexup.JwtSecret
+      Tenants__monexup__JwtSecret: ${MONEXUP_JWT_SECRET}
       # HTTPS certificate
       ASPNETCORE_Kestrel__Certificates__Default__Password: ${CERTIFICATE_PASSWORD}
       ASPNETCORE_Kestrel__Certificates__Default__Path: /app/emagine.pfx
