@@ -1,0 +1,19 @@
+meta {
+  name: Get By Email
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/user/getByEmail/:email
+  body: none
+  auth: bearer
+}
+
+params:path {
+  email: john@example.com
+}
+
+auth:bearer {
+  token: {{token}}
+}

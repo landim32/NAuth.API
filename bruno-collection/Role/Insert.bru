@@ -1,0 +1,23 @@
+meta {
+  name: Insert
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/role/insert
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "roleId": 0,
+    "slug": "editor",
+    "name": "Editor"
+  }
+}

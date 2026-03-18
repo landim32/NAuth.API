@@ -1,0 +1,23 @@
+meta {
+  name: Search (Admin)
+  type: http
+  seq: 14
+}
+
+post {
+  url: {{baseUrl}}/user/search
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "searchTerm": "john",
+    "page": 1,
+    "pageSize": 10
+  }
+}

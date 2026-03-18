@@ -1,0 +1,19 @@
+meta {
+  name: Get By Slug
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/role/getBySlug/:slug
+  body: none
+  auth: bearer
+}
+
+params:path {
+  slug: admin
+}
+
+auth:bearer {
+  token: {{token}}
+}

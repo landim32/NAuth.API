@@ -1,0 +1,28 @@
+meta {
+  name: Insert
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/user/insert
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "slug": "john-doe",
+    "imageUrl": "",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "isAdmin": false,
+    "birthDate": "1990-01-01",
+    "idDocument": "",
+    "pixKey": "",
+    "password": "P@ssw0rd123",
+    "roles": [],
+    "phones": [],
+    "addresses": []
+  }
+}

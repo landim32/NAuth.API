@@ -1,0 +1,33 @@
+meta {
+  name: Login With Email
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/user/loginWithEmail
+  body: json
+  auth: none
+}
+
+headers {
+  X-Device-Fingerprint: bruno-client
+  X-Tenant-Id: monexup
+}
+
+body:json {
+  {
+    "email": "john@example.com",
+    "password": "P@ssw0rd123"
+  }
+}
+
+vars:pre-request {
+  baseUrl: https://emagine.com.br/auth-api	
+}
+
+script:post-response {
+  if (res.status === 200) {
+    bru.setVar("token", res.body.token);
+  }
+}

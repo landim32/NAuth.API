@@ -1,0 +1,15 @@
+meta {
+  name: Get By Slug
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/user/getBySlug/:slug
+  body: none
+  auth: none
+}
+
+params:path {
+  slug: john-doe
+}

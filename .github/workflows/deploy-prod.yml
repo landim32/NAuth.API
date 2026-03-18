@@ -4,72 +4,165 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  checkout:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Deploy via SSH
-      uses: appleboy/ssh-action@v1
-      with:
-        host: ${{ secrets.PROD_SSH_HOST }}
-        username: ${{ secrets.PROD_SSH_USER }}
-        password: ${{ secrets.PROD_SSH_PASSWORD }}
-        port: ${{ secrets.PROD_SSH_PORT || 22 }}
-        script: |
-          set -e
+      - name: Clone or update repository
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          password: ${{ secrets.PROD_SSH_PASSWORD }}
+          port: ${{ secrets.PROD_SSH_PORT || 22 }}
+          script: |
+            set -e
+            DEPLOY_DIR="/opt/nauth"
+            REPO_URL="https://github.com/${{ github.repository }}.git"
+            BRANCH="main"
 
-          DEPLOY_DIR="/opt/nauth"
-          REPO_URL="https://github.com/${{ github.repository }}.git"
-          BRANCH="main"
+            if [ -d "$DEPLOY_DIR" ]; then
+              echo "Updating existing repository..."
+              cd "$DEPLOY_DIR"
+              git fetch origin
+              git reset --hard "origin/$BRANCH"
+              git clean -fd
+            else
+              echo "Cloning repository..."
+              git clone --branch "$BRANCH" --single-branch "$REPO_URL" "$DEPLOY_DIR"
+            fi
 
-          # Clone or update repository
-          if [ -d "$DEPLOY_DIR" ]; then
-            echo "Updating existing repository..."
+            echo "Repository ready at $DEPLOY_DIR"
+
+  inject-secrets:
+    runs-on: ubuntu-latest
+    needs: checkout
+    steps:
+      - name: Inject secrets into .env.prod
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          password: ${{ secrets.PROD_SSH_PASSWORD }}
+          port: ${{ secrets.PROD_SSH_PORT || 22 }}
+          script: |
+            set -e
+            DEPLOY_DIR="/opt/nauth"
             cd "$DEPLOY_DIR"
-            git fetch origin
-            git reset --hard "origin/$BRANCH"
-            git clean -fd
-          else
-            echo "Cloning repository..."
-            git clone --branch "$BRANCH" --single-branch "$REPO_URL" "$DEPLOY_DIR"
+
+            cat > .env.prod <<'ENVEOF'
+            CERTIFICATE_PASSWORD=${{ secrets.CERTIFICATE_PASSWORD }}
+            EMAGINE_CONNECTION_STRING=${{ secrets.EMAGINE_CONNECTION_STRING }}
+            EMAGINE_JWT_SECRET=${{ secrets.EMAGINE_JWT_SECRET }}
+            VIRALT_CONNECTION_STRING=${{ secrets.VIRALT_CONNECTION_STRING }}
+            VIRALT_JWT_SECRET=${{ secrets.VIRALT_JWT_SECRET }}
+            DEVBLOG_CONNECTION_STRING=${{ secrets.DEVBLOG_CONNECTION_STRING }}
+            DEVBLOG_JWT_SECRET=${{ secrets.DEVBLOG_JWT_SECRET }}
+            BAZZUCA_CONNECTION_STRING=${{ secrets.BAZZUCA_CONNECTION_STRING }}
+            BAZZUCA_JWT_SECRET=${{ secrets.BAZZUCA_JWT_SECRET }}
+            MONEXUP_CONNECTION_STRING=${{ secrets.MONEXUP_CONNECTION_STRING }}
+            MONEXUP_JWT_SECRET=${{ secrets.MONEXUP_JWT_SECRET }}
+            ENVEOF
+
+            sed -i 's/^[[:space:]]*//' .env.prod
+            echo ".env.prod written successfully"
+
+  network-setup:
+    runs-on: ubuntu-latest
+    needs: inject-secrets
+    steps:
+      - name: Ensure Docker network exists
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          password: ${{ secrets.PROD_SSH_PASSWORD }}
+          port: ${{ secrets.PROD_SSH_PORT || 22 }}
+          script: |
+            set -e
+            docker network inspect emagine-network >/dev/null 2>&1 || docker network create emagine-network
+            echo "Network emagine-network ready"
+
+  stop-services:
+    runs-on: ubuntu-latest
+    needs: network-setup
+    steps:
+      - name: Stop running containers
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          password: ${{ secrets.PROD_SSH_PASSWORD }}
+          port: ${{ secrets.PROD_SSH_PORT || 22 }}
+          script: |
+            set -e
+            DEPLOY_DIR="/opt/nauth"
             cd "$DEPLOY_DIR"
-          fi
 
-          # Inject .env.prod from GitHub Secrets (UPPER_SNAKE_CASE)
-          cat > .env.prod <<'ENVEOF'
-          CERTIFICATE_PASSWORD=${{ secrets.CERTIFICATE_PASSWORD }}
-          EMAGINE_CONNECTION_STRING=${{ secrets.EMAGINE_CONNECTION_STRING }}
-          EMAGINE_JWT_SECRET=${{ secrets.EMAGINE_JWT_SECRET }}
-          VIRALT_CONNECTION_STRING=${{ secrets.VIRALT_CONNECTION_STRING }}
-          VIRALT_JWT_SECRET=${{ secrets.VIRALT_JWT_SECRET }}
-          DEVBLOG_CONNECTION_STRING=${{ secrets.DEVBLOG_CONNECTION_STRING }}
-          DEVBLOG_JWT_SECRET=${{ secrets.DEVBLOG_JWT_SECRET }}
-          BAZZUCA_CONNECTION_STRING=${{ secrets.BAZZUCA_CONNECTION_STRING }}
-          BAZZUCA_JWT_SECRET=${{ secrets.BAZZUCA_JWT_SECRET }}
-          ENVEOF
+            docker compose --env-file .env.prod -f docker-compose-prod.yml down || true
+            echo "Services stopped"
 
-          # Remove leading whitespace from .env.prod
-          sed -i 's/^[[:space:]]*//' .env.prod
+  build-deploy:
+    runs-on: ubuntu-latest
+    needs: stop-services
+    steps:
+      - name: Build and start services
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          password: ${{ secrets.PROD_SSH_PASSWORD }}
+          port: ${{ secrets.PROD_SSH_PORT || 22 }}
+          script: |
+            set -e
+            DEPLOY_DIR="/opt/nauth"
+            cd "$DEPLOY_DIR"
 
-          # Create external network if it doesn't exist
-          docker network inspect emagine-network >/dev/null 2>&1 || docker network create emagine-network
+            docker compose --env-file .env.prod -f docker-compose-prod.yml up --build -d
+            echo "Services started"
 
-          # Deploy with docker compose
-          docker compose --env-file .env.prod -f docker-compose-prod.yml down
-          docker compose --env-file .env.prod -f docker-compose-prod.yml up --build -d
+  health-check:
+    runs-on: ubuntu-latest
+    needs: build-deploy
+    steps:
+      - name: Verify deployment health
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          password: ${{ secrets.PROD_SSH_PASSWORD }}
+          port: ${{ secrets.PROD_SSH_PORT || 22 }}
+          script: |
+            set -e
+            DEPLOY_DIR="/opt/nauth"
+            cd "$DEPLOY_DIR"
 
-          # Wait and verify
-          echo "Waiting for services to start..."
-          sleep 10
-          docker compose --env-file .env.prod -f docker-compose-prod.yml ps
+            echo "Waiting for services to start..."
+            sleep 10
 
-          echo "Deployment completed successfully."
+            docker compose --env-file .env.prod -f docker-compose-prod.yml ps
 
-    - name: Summary
-      run: |
-        echo "## Production Deployment" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "- Server: \`${{ secrets.PROD_SSH_HOST }}\`" >> $GITHUB_STEP_SUMMARY
-        echo "- Branch: \`main\`" >> $GITHUB_STEP_SUMMARY
-        echo "- Commit: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
-        echo "- Triggered by: \`${{ github.event_name }}\`" >> $GITHUB_STEP_SUMMARY
+            CONTAINER_NAME="nauth-api"
+            HTTP_STATUS=$(docker exec "$CONTAINER_NAME" curl -s -o /dev/null -w "%{http_code}" http://localhost:80/ || echo "000")
+            if [ "$HTTP_STATUS" = "200" ]; then
+              echo "Health check passed (HTTP $HTTP_STATUS)"
+            else
+              echo "WARNING: Health check returned HTTP $HTTP_STATUS"
+              docker compose --env-file .env.prod -f docker-compose-prod.yml logs --tail=50
+              exit 1
+            fi
+
+  summary:
+    runs-on: ubuntu-latest
+    needs: health-check
+    steps:
+      - name: Deployment summary
+        run: |
+          echo "## ✅ Production Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Detail | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Server | \`${{ secrets.PROD_SSH_HOST }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Branch | \`main\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Commit | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Triggered by | \`${{ github.actor }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Timestamp | \`$(date -u +'%Y-%m-%d %H:%M:%S UTC')\` |" >> $GITHUB_STEP_SUMMARY

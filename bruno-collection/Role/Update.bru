@@ -1,0 +1,23 @@
+meta {
+  name: Update
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/role/update
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "roleId": 1,
+    "slug": "editor",
+    "name": "Editor Updated"
+  }
+}

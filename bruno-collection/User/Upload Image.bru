@@ -1,0 +1,19 @@
+meta {
+  name: Upload Image
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{baseUrl}}/user/uploadImageUser
+  body: multipartForm
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:multipart-form {
+  file: @file()
+}

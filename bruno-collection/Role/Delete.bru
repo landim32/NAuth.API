@@ -1,0 +1,19 @@
+meta {
+  name: Delete
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{baseUrl}}/role/delete/:roleId
+  body: none
+  auth: bearer
+}
+
+params:path {
+  roleId: 1
+}
+
+auth:bearer {
+  token: {{token}}
+}

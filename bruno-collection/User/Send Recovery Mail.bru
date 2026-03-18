@@ -1,0 +1,15 @@
+meta {
+  name: Send Recovery Mail
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{baseUrl}}/user/sendRecoveryMail/:email
+  body: none
+  auth: none
+}
+
+params:path {
+  email: john@example.com
+}
