@@ -1,12 +1,6 @@
 name: Publish NuGet Package
 
 on:
-  workflow_run:
-    workflows: ["Version and Tag"]
-    types:
-      - completed
-    branches:
-      - main
   workflow_dispatch:
 
 env:
@@ -16,7 +10,6 @@ env:
 jobs:
   publish-nuget:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     permissions:
       contents: read
       packages: write
