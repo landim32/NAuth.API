@@ -30,6 +30,9 @@ namespace NAuth.Infra.Repository
             md.IsAdmin = u.IsAdmin;
             md.StripeId = u.StripeId;
             md.Status = (NAuth.Domain.Enums.UserStatus)u.Status;
+            md.IdDocument = u.IdDocument;
+            md.BirthDate = u.BirthDate;
+            md.PixKey = u.PixKey;
             md.CreatedAt = u.CreatedAt;
             md.UpdatedAt = u.UpdatedAt;
             return md;
@@ -46,6 +49,9 @@ namespace NAuth.Infra.Repository
             row.IsAdmin = md.IsAdmin;
             row.StripeId = md.StripeId;
             row.Status = (int)md.Status;
+            row.IdDocument = md.IdDocument;
+            row.BirthDate = md.BirthDate;
+            row.PixKey = md.PixKey;
             row.CreatedAt = md.CreatedAt;
             row.UpdatedAt = md.UpdatedAt;
         }

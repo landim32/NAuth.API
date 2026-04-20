@@ -53,10 +53,10 @@ declarada em `Tenants:{id}`. `BucketName` é usado por `zTools` para prefixar up
 ## Decision 3 — Estratégia de validação sem Docker local
 
 **Decisão**: Validação pós-deploy em ambiente de produção (ou staging idêntico à produção), usando
-coleções Bruno (`bruno-collection/`) com header `X-Tenant-Id: fortuno`.
+coleções Bruno (`bruno/`) com header `X-Tenant-Id: fortuno`.
 
 **Rationale**: Princípio II da constituição proíbe `docker compose` local. O projeto já adota
-testes manuais via Bruno para cenários multi-tenant (ex.: `bruno-collection/User/Login With
+testes manuais via Bruno para cenários multi-tenant (ex.: `bruno/User/Login With
 Email.bru` referencia identificadores de tenant). Testes unitários existentes em
 `NAuth.Test/Tenant/TenantTests.cs` cobrem o resolver de tenant de forma agnóstica ao nome; eles
 continuam verdes sem modificações.

@@ -98,7 +98,7 @@ FORTUNO_JWT_SECRET=<segredo-com-pelo-menos-64-caracteres>
 ## Passo 6 — Deploy e smoke test
 
 Realize o deploy pelo pipeline de produção padrão. Após o container subir, valide os três
-cenários de aceitação do spec com a coleção Bruno (`bruno-collection/`):
+cenários de aceitação do spec com a coleção Bruno (`bruno/`):
 
 ### 6.1 Login como tenant fortuno
 

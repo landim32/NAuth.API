@@ -1,0 +1,55 @@
+meta {
+  name: Update
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/user/update
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "userId": 1,
+    "slug": "rodrigo-landim",
+    "imageUrl": "",
+    "name": "Rodrigo Landim",
+    "email": "rodrigo@emagine.com.br",
+    "hash": "pU8MILkTP95axC7-02EyMt2cA6fTNsSv-IK5z6KrbG7iS6n76c8VDVsq39pRVy319DorstlJ5Gy06WByFpqRTSEfmMmSWylIWXV2",
+    "isAdmin": true,
+    "birthDate": null,
+    "idDocument": null,
+    "pixKey": null,
+    "status": 1,
+    "roles": [
+      {
+        "roleId": 1,
+        "slug": "administrator",
+        "name": "Administrator"
+      }
+    ],
+    "phones": [
+      {
+        "phone": "61998752588"
+      }
+    ],
+    "addresses": [
+      {
+        "zipCode": "73252900",
+        "address": "Condomínio RK",
+        "complement": "Conj. Centauros Qd N Casa 42",
+        "neighborhood": "Sobradinho",
+        "city": "Brasília",
+        "state": "DF"
+      }
+    ],
+    "createAt": "2026-04-17T00:00:00",
+    "updateAt": "2026-04-17T14:09:09.604954"
+  }
+}
